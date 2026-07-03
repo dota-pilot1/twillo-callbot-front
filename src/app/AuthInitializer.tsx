@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { authActions, useAuth } from "@/entities/user/model/authStore";
+import { checkForUpdates } from "@/shared/tauri/checkForUpdates";
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
   useAuth();
@@ -13,6 +14,7 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     authActions.restore();
+    void checkForUpdates();
   }, []);
 
   useEffect(() => {
