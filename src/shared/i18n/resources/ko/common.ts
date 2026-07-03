@@ -1,0 +1,15 @@
+export const common = {
+  brand: "마포 미용실",
+  tagline: "마포 미용실 예약 문의 콜봇입니다.",
+  description: "전화 예약 문의와 고객 응대 흐름을 관리합니다.",
+  loading: "처리 중...",
+  confirm: "확인",
+  cancel: "취소",
+  save: "저장",
+  delete: "삭제",
+  edit: "편집",
+  close: "닫기",
+  search: "검색",
+  language: "언어",
+  theme: "테마",
+};

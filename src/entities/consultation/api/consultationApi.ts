@@ -1,0 +1,25 @@
+import { api } from "@/shared/api/axios";
+import { tokenStorage } from "@/shared/api/tokenStorage";
+import type {
+  ConsultationAgentStatusResponse,
+  UpdateConsultationAgentStatusRequest,
+} from "../model/types";
+
+export const consultationApi = {
+  listAgents: () =>
+    api.get<ConsultationAgentStatusResponse[]>("/api/v1/consultation/agents").then((r) => r.data),
+
+  updateMyStatus: (request: UpdateConsultationAgentStatusRequest) =>
+    api.patch<ConsultationAgentStatusResponse>("/api/v1/consultation/agents/me/status", request).then((r) => r.data),
+};
+
+export function createConsultationStatusWebSocket(): WebSocket | null {
+  const token = tokenStorage.getAccess();
+  if (!token) return null;
+
+  const baseUrl = api.defaults.baseURL ?? "http://localhost:4101";
+  const url = new URL("/ws/consultation-status", baseUrl);
+  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+  url.searchParams.set("access_token", token);
+  return new WebSocket(url.toString());
+}
