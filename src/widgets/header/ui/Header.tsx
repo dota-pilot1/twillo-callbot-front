@@ -75,7 +75,7 @@ function AuthHeader() {
   const { t } = useTranslation("nav");
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
-      <div className="flex h-14 items-center justify-between px-4">
+      <div data-tauri-drag-region className="flex h-14 items-center justify-between px-4">
         <Link href="/" className="text-sm font-extrabold tracking-tight">
           마포 미용실
         </Link>
@@ -96,6 +96,7 @@ function AuthHeader() {
             <LogIn className="h-4 w-4" />
             <span className="hidden sm:inline">{t("login")}</span>
           </Link>
+          <WindowControls />
         </div>
       </div>
     </header>
