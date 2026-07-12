@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     basePath: githubPagesBasePath,
     assetPrefix: githubPagesBasePath,
   }),
+  devIndicators: {
+    position: "bottom-right",
+  },
   trailingSlash: true,
   images: {
     unoptimized: true,

@@ -7,6 +7,7 @@ import { AuthInitializer } from "./AuthInitializer";
 import { AppChrome } from "@/widgets/header";
 import { ThemeInitializer } from "@/shared/ui/theme/ThemeInitializer";
 import { I18nProvider } from "@/shared/i18n/I18nProvider";
+import { FloatingChatButton } from "@/shared/ui/FloatingChatButton";
 
 const themeNoFlashScript = `(function(){try{var t=localStorage.getItem("theme-color");if(t&&t!=="default")document.documentElement.setAttribute("data-theme",t);}catch(e){}})();`;
 
@@ -21,8 +22,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "마포 미용실",
-  description: "마포 미용실 예약 문의 콜봇",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://twillo-callbot.web.app"),
+  title: {
+    default: "밀라의원 | 신사동 피부과·비만클리닉 상담 예약",
+    template: "%s | 밀라의원",
+  },
+  description: "피부과·비만클리닉 병원 홍보·예약 홈페이지 파일럿",
+  openGraph: {
+    title: "밀라의원 | 신사동 피부과·비만클리닉 상담 예약",
+    description: "신사동 피부과·비만클리닉 상담 예약, 위치, 진료시간, 대표 프로그램 안내.",
+    images: ["/images/clinic/milla-cover.webp"],
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -43,6 +54,7 @@ export default function RootLayout({
           <QueryProvider>
             <AuthInitializer>
               <AppChrome>{children}</AppChrome>
+              <FloatingChatButton />
             </AuthInitializer>
           </QueryProvider>
         </I18nProvider>

@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ClipboardCheck, PhoneIncoming } from "lucide-react";
+import { ArrowRight, CalendarCheck, ClipboardCheck, Home, MessageSquareText, Stethoscope, UsersRound } from "lucide-react";
 import { RequireAuth } from "@/widgets/guards/RequireAuth";
-
-const SOFTPHONE_NUMBER = process.env.NEXT_PUBLIC_SOFTPHONE_NUMBER ?? "+1 814 402 8603";
 
 export default function DashboardPage() {
   return (
@@ -13,35 +11,72 @@ export default function DashboardPage() {
         <section className="border-b border-border pb-6">
           <p className="flex items-center gap-1.5 text-sm font-semibold text-primary">
             <ClipboardCheck className="h-4 w-4" />
-            Mini Call Center Step 1
+            예약형 병원 홈페이지
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight">소프트폰 MVP</h1>
+          <h1 className="mt-2 text-3xl font-extrabold tracking-tight">병원 홍보·예약 홈페이지 운영</h1>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            지금 단계에서는 대시보드, 예약 자동화, 프로모션보다 상담원이 전화를 받을 수 있는 최소 상태 전이를 먼저 검증합니다.
+            병원 소개, 시술/프로그램 안내, 예약 상담 신청, 고객 문의 관리를 한 흐름으로 정리합니다.
           </p>
         </section>
 
-        <section className="mt-6 rounded-lg border border-border bg-card p-5">
-          <div className="flex items-start gap-4">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-white">
-              <PhoneIncoming className="h-5 w-5" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <h2 className="text-lg font-bold tracking-tight">전화 받기 화면부터 구현</h2>
-              <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                대표번호 {SOFTPHONE_NUMBER} 인입을 브라우저 소프트폰으로 받고, 오프라인/수신 대기/전화 옴/통화중/후처리 상태만 확인합니다.
-              </p>
-              <Link
-                href="/softphone"
-                className="mt-4 inline-flex h-10 items-center gap-2 rounded-md bg-primary px-3 text-sm font-bold text-primary-foreground transition-opacity hover:opacity-90"
-              >
-                소프트폰 열기
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
+        <section className="mt-6 grid gap-3">
+          <DashboardLink
+            href="/"
+            icon={Home}
+            title="홈페이지 미리보기"
+            text="고객에게 보이는 병원 소개, 프로그램, 예약 상담 CTA 흐름을 확인합니다."
+          />
+          <DashboardLink
+            href="/clinic-settings"
+            icon={Stethoscope}
+            title="병원 소개 관리"
+            text="홈페이지에 노출될 병원 소개, 위치, 진료시간, 대표 프로그램 정보를 정리합니다."
+          />
+          <DashboardLink
+            href="/appointments"
+            icon={CalendarCheck}
+            title="예약 상담 관리"
+            text="홈페이지와 챗봇에서 들어온 예약 상담 요청을 확인하고 처리합니다."
+          />
+          <DashboardLink
+            href="/customers"
+            icon={UsersRound}
+            title="고객 문의 관리"
+            text="전화번호 기반 고객 문의, 상담 메모, 예약 이력을 관리합니다."
+          />
+          <DashboardLink
+            href="/messages"
+            icon={MessageSquareText}
+            title="안내 메시지 발송"
+            text="예약 확정, 내원 전 안내, 이벤트 소식을 SMS·이메일로 발송합니다."
+          />
         </section>
       </main>
     </RequireAuth>
+  );
+}
+
+function DashboardLink({
+  href,
+  icon: Icon,
+  title,
+  text,
+}: {
+  href: string;
+  icon: typeof Stethoscope;
+  title: string;
+  text: string;
+}) {
+  return (
+    <Link href={href} className="flex items-start gap-4 rounded-lg border border-border bg-card p-5 hover:bg-accent/40">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-white">
+        <Icon className="h-5 w-5" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-lg font-bold tracking-tight">{title}</span>
+        <span className="mt-1 block text-sm leading-6 text-muted-foreground">{text}</span>
+      </span>
+      <ArrowRight className="mt-3 h-4 w-4 text-muted-foreground" />
+    </Link>
   );
 }

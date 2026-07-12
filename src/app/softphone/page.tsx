@@ -1,16 +1,29 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { RequireAuth } from "@/widgets/guards/RequireAuth";
 import { SoftphoneConsole } from "@/features/softphone/SoftphoneConsole";
+import { useTauriRuntime } from "@/shared/tauri/useIsTauri";
 
 export default function SoftphonePage() {
+  const router = useRouter();
+  const { isReady, isTauri } = useTauriRuntime();
+
+  useEffect(() => {
+    if (isReady && !isTauri) {
+      router.replace("/clinic");
+    }
+  }, [isReady, isTauri, router]);
+
+  if (!isReady || !isTauri) return null;
+
   return (
     <RequireAuth>
       <SoftphoneConsole
-        initialTab="inbound"
-        eyebrow="Inbound Call"
-        title="전화 받기"
-        description={`${process.env.NEXT_PUBLIC_SOFTPHONE_NUMBER ?? "+1 814 402 8603"}로 들어오는 전화를 상담원 브라우저에서 받습니다.`}
+        eyebrow="Clinic Softphone"
+        title="소프트폰 상담 콘솔"
+        description="대표번호로 들어오는 예약 문의를 받고, 필요하면 고객에게 바로 전화합니다."
       />
     </RequireAuth>
   );
