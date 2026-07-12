@@ -1,18 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Building2, Check, Copy, ExternalLink, MapPin, Navigation, PhoneCall, Train } from "lucide-react";
-
-const clinic = {
-  name: "밀라의원",
-  address: "서울특별시 강남구 가로수길 18 약산빌딩 3층",
-  shortAddress: "서울 강남구 가로수길 18 약산빌딩 3층",
-  phone: "02-715-0328",
-  subway: "신사역 8번 출구 도보 약 6분",
-  building: "약산빌딩 3층",
-  lat: 37.520586,
-  lng: 127.022837,
-};
+import {
+  Building2,
+  Check,
+  Copy,
+  ExternalLink,
+  MapPin,
+  Navigation,
+  PhoneCall,
+  Train,
+} from "lucide-react";
+import { clinicProfile as clinic } from "@/shared/config/clinic";
 
 const mapLinks = [
   {
@@ -23,13 +22,11 @@ const mapLinks = [
     label: "카카오맵",
     href: `https://map.kakao.com/?q=${encodeURIComponent(clinic.address + " " + clinic.name)}`,
   },
-  {
-    label: "구글 지도",
-    href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(clinic.address + " " + clinic.name)}`,
-  },
 ];
 
-const googleMapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(clinic.address + " " + clinic.name)}&output=embed`;
+const googleMapUrl = `https://www.google.com/maps?q=${encodeURIComponent(
+  `${clinic.name} ${clinic.address}`
+)}&hl=ko&region=KR&z=17&output=embed`;
 
 export function HospitalLocationPanel() {
   const [copied, setCopied] = useState(false);
@@ -43,15 +40,7 @@ export function HospitalLocationPanel() {
   return (
     <section className="overflow-hidden rounded-lg border border-border bg-card shadow-sm">
       <div className="grid lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="relative min-h-[520px] overflow-hidden bg-[#edf3f6]">
-          <iframe
-            title="밀라의원 약도"
-            src={googleMapEmbedUrl}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="absolute inset-0 h-full w-full border-0"
-          />
-        </div>
+        <GoogleLocationMap />
 
         <aside className="border-t border-border bg-background p-5 lg:border-l lg:border-t-0">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">Location</p>
@@ -95,6 +84,23 @@ export function HospitalLocationPanel() {
         </aside>
       </div>
     </section>
+  );
+}
+
+function GoogleLocationMap() {
+  return (
+    <div className="relative min-h-[520px] overflow-hidden bg-[#edf3f6]">
+      <iframe
+        title={`${clinic.name} 지도`}
+        src={googleMapUrl}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        className="absolute inset-0 h-full w-full border-0"
+      />
+      <div className="pointer-events-none absolute left-3 top-3 rounded-md border border-border bg-background/95 px-3 py-2 text-xs font-bold shadow-sm">
+        Google 지도 · 한국어 표시
+      </div>
+    </div>
   );
 }
 

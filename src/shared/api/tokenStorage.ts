@@ -1,31 +1,43 @@
-const ACCESS_KEY = "twilio.accessToken";
-const REFRESH_KEY = "twilio.refreshToken";
+import { getApiEnvironment } from "./apiEnvironment";
 
-let accessMemory: string | null = null;
+const accessMemory: Partial<Record<"local" | "production", string | null>> = {};
+
+function keys() {
+  const environment = getApiEnvironment();
+  return {
+    environment,
+    access: `twilio.${environment}.accessToken`,
+    refresh: `twilio.${environment}.refreshToken`,
+  };
+}
 
 export const tokenStorage = {
   getAccess(): string | null {
-    if (accessMemory !== null) return accessMemory;
+    const key = keys();
+    if (key.environment in accessMemory) return accessMemory[key.environment] ?? null;
     if (typeof window === "undefined") return null;
-    accessMemory = window.localStorage.getItem(ACCESS_KEY);
-    return accessMemory;
+    const token = window.localStorage.getItem(key.access);
+    accessMemory[key.environment] = token;
+    return token;
   },
   getRefresh(): string | null {
     if (typeof window === "undefined") return null;
-    return window.localStorage.getItem(REFRESH_KEY);
+    return window.localStorage.getItem(keys().refresh);
   },
   set(access: string, refresh: string) {
-    accessMemory = access;
+    const key = keys();
+    accessMemory[key.environment] = access;
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(ACCESS_KEY, access);
-      window.localStorage.setItem(REFRESH_KEY, refresh);
+      window.localStorage.setItem(key.access, access);
+      window.localStorage.setItem(key.refresh, refresh);
     }
   },
   clear() {
-    accessMemory = null;
+    const key = keys();
+    accessMemory[key.environment] = null;
     if (typeof window !== "undefined") {
-      window.localStorage.removeItem(ACCESS_KEY);
-      window.localStorage.removeItem(REFRESH_KEY);
+      window.localStorage.removeItem(key.access);
+      window.localStorage.removeItem(key.refresh);
     }
   },
 };

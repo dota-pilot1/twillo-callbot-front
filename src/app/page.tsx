@@ -4,11 +4,14 @@ import {
   ArrowRight,
   CalendarCheck,
   Clock,
+  HeartPulse,
   MapPin,
   PhoneCall,
+  ShieldCheck,
   Sparkles,
   Stethoscope,
 } from "lucide-react";
+import { clinicProfile } from "@/shared/config/clinic";
 
 const programs = [
   {
@@ -39,64 +42,60 @@ const steps = [
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-background">
-      <section className="relative isolate overflow-hidden bg-zinc-950 text-white">
+      <section className="relative isolate overflow-hidden bg-stone-950 text-white">
         <Image
-          src="/images/clinic/clinic-hero.jpg"
-          alt="병원 전경"
+          src="/images/clinic/clinic-reception.png"
+          alt={`${clinicProfile.shortName} 상담 공간`}
           fill
           priority
           sizes="100vw"
-          className="absolute inset-0 -z-20 object-cover opacity-80"
+          className="absolute inset-0 -z-20 object-cover"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-zinc-950 via-zinc-950/70 to-zinc-950/10" />
-        <div className="mx-auto grid min-h-[620px] w-full max-w-6xl items-center gap-10 px-4 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:px-6">
-          <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-bold backdrop-blur">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-stone-950/92 via-stone-950/58 to-stone-950/12" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-stone-950/82 to-transparent" />
+
+        <div className="mx-auto flex min-h-[560px] w-full max-w-6xl flex-col justify-center px-4 py-14 lg:min-h-[620px] lg:px-6">
+          <div className="max-w-3xl">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/12 px-3 py-1 text-xs font-bold text-white shadow-sm backdrop-blur-md">
               <Sparkles className="h-3.5 w-3.5" />
-              피부과·비만클리닉
+              {clinicProfile.category}
             </p>
-            <h1 className="mt-6 max-w-2xl text-4xl font-black leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-              병원 소개부터 예약 상담까지 한 번에 연결합니다.
+            <h1 className="mt-6 text-5xl font-black leading-tight tracking-tight sm:text-6xl lg:text-7xl">
+              {clinicProfile.shortName}
             </h1>
-            <p className="mt-5 max-w-xl text-base font-medium leading-8 text-white/85">
-              홈페이지는 병원 신뢰와 프로그램을 보여주고, 고객 예약 신청은 전화·SMS 운영 앱으로 이어지는 홍보형 병원 홈페이지 파일럿입니다.
+            <p className="mt-5 max-w-2xl text-2xl font-extrabold leading-snug tracking-tight text-white sm:text-3xl">
+              피부 고민과 체형 관리 상담을 차분하게 안내합니다.
+            </p>
+            <p className="mt-5 max-w-xl text-base font-medium leading-8 text-white/82">
+              도산공원 인근 프라이빗 클리닉에서 피부·리프팅·스킨케어 상담을 신청하고, 상담원이 전화 또는 메시지로 예약 가능 시간을 안내합니다.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/booking"
-                className="inline-flex h-12 items-center gap-2 rounded-md bg-white px-5 text-sm font-extrabold text-zinc-950 hover:bg-white/90"
+                className="inline-flex h-12 items-center gap-2 rounded-md bg-white px-5 text-sm font-extrabold text-stone-950 shadow-lg shadow-stone-950/20 hover:bg-white/90"
               >
                 예약 상담 신청
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/services"
+                href="/"
                 className="inline-flex h-12 items-center gap-2 rounded-md border border-white/35 bg-white/10 px-5 text-sm font-bold backdrop-blur hover:bg-white/20"
               >
-                시술/프로그램 보기
+                병원 소개 보기
               </Link>
             </div>
           </div>
 
-          <div className="hidden rounded-lg border border-white/20 bg-white/90 p-4 text-zinc-950 shadow-2xl backdrop-blur md:block">
-            <Image
-              src="/images/clinic/clinic-reception.png"
-              alt="예약 상담 접수"
-              width={1672}
-              height={941}
-              className="h-64 w-full rounded-md object-cover"
-            />
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <QuickStat label="상담 채널" value="전화·예약폼" />
-              <QuickStat label="예약 관리" value="관리자 확인" />
-              <QuickStat label="안내 발송" value="SMS·이메일" />
-            </div>
+          <div className="mt-12 grid max-w-3xl gap-3 text-white sm:grid-cols-3">
+            <HeroPoint icon={MapPin} label="위치" value="도산공원 인근" />
+            <HeroPoint icon={ShieldCheck} label="상담 방식" value="1:1 확인 후 확정" />
+            <HeroPoint icon={HeartPulse} label="진료 분야" value="피부·리프팅·비만" />
           </div>
         </div>
       </section>
 
       <section className="mx-auto grid w-full max-w-6xl gap-4 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4 lg:px-6">
-        <ActionCard href="/clinic" icon={Stethoscope} title="병원 소개" text="병원 정보와 대표 프로그램 확인" />
+        <ActionCard href="/" icon={Stethoscope} title="병원 소개" text="병원 정보와 대표 프로그램 확인" />
         <ActionCard href="/services" icon={Sparkles} title="시술 소개" text="피부·리프팅·비만클리닉 안내" />
         <ActionCard href="/location" icon={MapPin} title="약도 안내" text="주소와 길찾기 확인" />
         <ActionCard href="/booking" icon={CalendarCheck} title="예약 신청" text="홈페이지에서 바로 상담 예약" />
@@ -106,9 +105,9 @@ export default function HomePage() {
         <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:px-6">
           <div>
             <p className="text-sm font-bold text-primary">대표 프로그램</p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight">홍보 페이지에서 바로 예약으로 이어지는 구성</h2>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight">상담 전환에 필요한 정보만 선명하게</h2>
             <p className="mt-4 text-sm leading-7 text-muted-foreground">
-              병원 소개, 시술 정보, 장비 이미지, 위치 정보를 한 화면에서 신뢰감 있게 보여주고 고객 행동은 상담 신청으로 모읍니다.
+              병원 소개, 대표 프로그램, 위치 정보를 먼저 보여주고 고객 행동은 예약 상담 신청으로 자연스럽게 모읍니다.
             </p>
             <Image
               src="/images/clinic/clinic-device.png"
@@ -134,7 +133,7 @@ export default function HomePage() {
         <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 md:flex-row md:items-end">
           <div>
             <p className="text-sm font-bold text-primary">예약 흐름</p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight">미용실 예약 앱처럼 단순한 고객 여정</h2>
+            <h2 className="mt-2 text-3xl font-extrabold tracking-tight">정확한 예약 전, 먼저 상담 요청을 받습니다</h2>
           </div>
           <Link href="/booking" className="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline">
             예약 상담 신청하기
@@ -159,12 +158,12 @@ export default function HomePage() {
           <div>
             <p className="flex items-center gap-2 text-sm font-bold text-emerald-300">
               <PhoneCall className="h-4 w-4" />
-              상담 예약 02-715-0328
+              상담 예약 {clinicProfile.phone}
             </p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-tight">상담 요청을 놓치지 않도록 전화·챗봇·메시지를 한 흐름으로 묶습니다.</h2>
             <p className="mt-3 flex items-center gap-2 text-sm text-white/70">
               <Clock className="h-4 w-4" />
-              진료시간은 상담 예약 후 확정 안내
+              {clinicProfile.hours[0]}
             </p>
           </div>
           <Link
@@ -180,11 +179,22 @@ export default function HomePage() {
   );
 }
 
-function QuickStat({ label, value }: { label: string; value: string }) {
+function HeroPoint({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof MapPin;
+  label: string;
+  value: string;
+}) {
   return (
-    <div className="rounded-md bg-zinc-100 p-3">
-      <p className="text-xs font-bold text-zinc-500">{label}</p>
-      <p className="mt-1 text-sm font-extrabold">{value}</p>
+    <div className="flex items-center gap-3 border-l border-white/30 bg-white/10 px-4 py-3 backdrop-blur-md">
+      <Icon className="h-5 w-5 shrink-0 text-white" />
+      <span>
+        <span className="block text-xs font-bold text-white/65">{label}</span>
+        <span className="mt-0.5 block text-sm font-extrabold">{value}</span>
+      </span>
     </div>
   );
 }

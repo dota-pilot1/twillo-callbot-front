@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Bot, CalendarCheck, PhoneCall } from "lucide-react";
+import { Bot, CalendarCheck, ClipboardCheck, PhoneCall } from "lucide-react";
 import { BookingConsultationForm } from "./BookingConsultationForm";
+import { clinicProfile } from "@/shared/config/clinic";
 
 export const metadata: Metadata = {
   title: "예약 상담 신청",
   description:
-    "밀라의원 피부과·리프팅·비만클리닉 예약 상담을 신청하세요. 이름, 연락처, 관심 프로그램, 희망 방문 시간을 남기면 상담원이 확인합니다.",
+    `${clinicProfile.shortName} 예약 상담을 신청하세요. 이름, 연락처, 관심 프로그램, 희망 시간대를 남기면 상담원이 확인 후 연락드립니다.`,
   alternates: {
     canonical: "/booking",
   },
   openGraph: {
-    title: "밀라의원 예약 상담 신청",
-    description: "신사동 피부과·비만클리닉 전화 상담 및 예약 신청.",
+    title: `${clinicProfile.shortName} 예약 상담 신청`,
+    description: "도산 피부과·미용클리닉 전화 상담 및 예약 신청.",
     url: "/booking",
     images: ["/images/clinic/milla-cover.webp"],
   },
@@ -28,19 +29,27 @@ export default function BookingPage() {
         </p>
         <h1 className="mt-5 text-4xl font-black tracking-tight">예약 상담 신청</h1>
         <p className="mt-4 text-sm leading-7 text-muted-foreground">
-          관심 프로그램과 연락처를 남기면 상담원이 확인 후 전화 또는 SMS로 예약 가능 시간을 안내합니다. 지금 단계에서는 서버 연결 전 mock 접수로 저장합니다.
+          병원 예약은 미용실처럼 빈 시간을 바로 확정하기보다, 상담원이 시술 목적과 가능 시간대를 확인한 뒤 전화 또는 메시지로 최종 예약을 조율합니다.
+        </p>
+        <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-900">
+          입력한 시간은 확정 예약 시간이 아닙니다. 상담원이 확인 후 실제 내원 가능 시간을 안내합니다.
         </p>
 
         <div className="mt-8 space-y-3">
           <GuideCard
+            icon={ClipboardCheck}
+            title="간단 접수"
+            text="이름, 연락처, 관심 시술과 가능한 시간대만 먼저 남깁니다."
+          />
+          <GuideCard
             icon={PhoneCall}
-            title="전화 상담 우선"
-            text="상담원이 남겨진 번호로 연락해 예약을 확정합니다."
+            title="상담원 확인"
+            text="상담원이 시술 목적과 일정, 준비사항을 확인한 뒤 예약 시간을 조율합니다."
           />
           <GuideCard
             icon={Bot}
             title="챗봇 사전 상담"
-            text="궁금한 내용을 먼저 남기고 상담 신청으로 이어갈 수 있습니다."
+            text="고민 부위나 이전 시술 경험을 먼저 남기고 상담 신청으로 이어갈 수 있습니다."
             href="/chatbot"
           />
         </div>

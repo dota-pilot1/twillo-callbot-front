@@ -137,6 +137,14 @@ export function SignupForm() {
         {isSubmitting ? t("signingUp") : t("signUpButton")}
       </button>
 
+      <p className="text-center text-xs leading-5 text-muted-foreground">
+        회원가입을 진행하면{" "}
+        <Link href="/privacy" className="underline hover:text-foreground">
+          개인정보 처리방침
+        </Link>
+        에 동의한 것으로 봅니다.
+      </p>
+
       <p className="text-center text-sm text-muted-foreground">
         {t("haveAccount")}{" "}
         <Link href="/login" className="underline hover:text-foreground">

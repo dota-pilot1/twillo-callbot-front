@@ -12,7 +12,7 @@ export default function SoftphonePage() {
 
   useEffect(() => {
     if (isReady && !isTauri) {
-      router.replace("/clinic");
+      router.replace("/");
     }
   }, [isReady, isTauri, router]);
 

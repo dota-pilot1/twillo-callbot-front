@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Building2,
+  BookOpenCheck,
   CalendarCheck,
   ClipboardList,
   Headset,
@@ -15,6 +16,7 @@ import {
   MapPinned,
   Menu,
   Radio,
+  Stethoscope,
   Settings,
   UserCircle,
   UserPlus,
@@ -27,6 +29,8 @@ import { LanguageSelect } from "@/shared/ui/LanguageSelect";
 import { ThemeSwitcher } from "@/shared/ui/theme/ThemeSwitcher";
 import { cn } from "@/shared/lib/utils";
 import { useIsTauri } from "@/shared/tauri/useIsTauri";
+import { clinicProfile } from "@/shared/config/clinic";
+import { ApiEnvironmentToggle } from "@/shared/ui/ApiEnvironmentToggle";
 import { WindowControls } from "./WindowControls";
 
 type SidebarItem = {
@@ -48,6 +52,7 @@ const navItems: SidebarItem[] = [
 ];
 
 const adminItems: SidebarItem[] = [
+  { href: "/faqs", label: "FAQ", icon: BookOpenCheck },
   { href: "/users", label: "직원", icon: UserCircle },
   { href: "/roles", label: "권한", icon: ClipboardList },
   { href: "/menu-management", label: "메뉴", icon: Settings },
@@ -85,28 +90,31 @@ function AuthHeader({
   onLogout?: () => void;
 } = {}) {
   const { t } = useTranslation("nav");
-  const publicItems = [
-    { href: "/", label: "홈" },
-    { href: "/clinic", label: "병원 소개" },
-    { href: "/services", label: "시술 소개" },
-    { href: "/location", label: "약도" },
-    { href: "/booking", label: "예약" },
-  ];
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
       <div data-tauri-drag-region className="flex h-14 items-center justify-between px-4">
-        <Link href="/" className="text-sm font-extrabold tracking-tight">
-          Twillo Pilot Clinic
+        <Link href="/" className="flex min-w-0 items-center gap-2 text-sm font-extrabold tracking-tight">
+          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-stone-950 text-white">
+            <Stethoscope className="h-4 w-4" />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate leading-tight">{clinicProfile.shortName}</span>
+            <span className="hidden text-[11px] font-semibold leading-tight text-muted-foreground sm:block">
+              {clinicProfile.category}
+            </span>
+          </span>
         </Link>
-        <nav className="hidden items-center gap-4 md:flex">
-          {publicItems.map((item) => (
-            <Link key={item.href} href={item.href} className="text-sm font-semibold text-muted-foreground hover:text-foreground">
-              {item.label}
-            </Link>
-          ))}
+        <nav className="hidden items-center gap-5 md:flex">
+          <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-foreground">
+            병원 소개
+          </Link>
+          <Link href="/services" className="text-sm font-semibold text-muted-foreground hover:text-foreground">
+            시술 안내
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
+          <ApiEnvironmentToggle />
           <LanguageSelect />
           <ThemeSwitcher />
           {authenticatedName ? (
@@ -131,7 +139,7 @@ function AuthHeader({
             <>
               <Link
                 href="/register"
-                className="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm font-semibold hover:bg-accent"
+                className="hidden h-9 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm font-semibold hover:bg-accent sm:inline-flex"
               >
                 <UserPlus className="h-4 w-4" />
                 <span className="hidden sm:inline">{t("register")}</span>
@@ -173,6 +181,7 @@ function DesktopAuthHeader() {
         </div>
 
         <div className="flex items-center gap-2">
+          <ApiEnvironmentToggle />
           <LanguageSelect />
           <ThemeSwitcher />
           <Link
@@ -277,6 +286,7 @@ export function Header() {
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
+            <ApiEnvironmentToggle />
             <Link
               href="/profile"
               className="hidden h-9 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm font-semibold hover:bg-accent sm:inline-flex"
@@ -310,6 +320,7 @@ function getPageTitle(pathname: string) {
   if (pathname.startsWith("/location")) return "약도";
   if (pathname.startsWith("/softphone")) return "소프트폰";
   if (pathname.startsWith("/consultation-management")) return "상담 관리";
+  if (pathname.startsWith("/faqs")) return "FAQ 관리";
   if (pathname.startsWith("/consultation")) return "전화 걸기";
   if (pathname.startsWith("/dashboard")) return "운영 대시보드";
   if (pathname.startsWith("/users")) return "직원 관리";

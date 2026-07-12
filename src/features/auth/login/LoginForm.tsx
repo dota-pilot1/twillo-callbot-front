@@ -28,7 +28,7 @@ export function LoginForm({ nextPath }: LoginFormProps) {
   const safePath =
     nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")
       ? nextPath
-      : "/dashboard";
+      : "/";
 
   const {
     register,

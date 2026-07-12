@@ -1,10 +1,9 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { tokenStorage } from "./tokenStorage";
-
-const baseURL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4101";
+import { getApiBaseUrl } from "./apiEnvironment";
 
 export const api = axios.create({
-  baseURL,
+  baseURL: getApiBaseUrl(),
   timeout: 15_000,
   headers: { "Content-Type": "application/json" },
 });
@@ -12,6 +11,7 @@ export const api = axios.create({
 const AUTH_PATHS = ["/api/auth/login", "/api/auth/signup", "/api/auth/refresh"];
 
 api.interceptors.request.use((config) => {
+  config.baseURL = getApiBaseUrl();
   if (AUTH_PATHS.some((p) => config.url?.includes(p))) return config;
   const token = tokenStorage.getAccess();
   if (token) {
@@ -39,7 +39,7 @@ function flushQueue(error: unknown, token: string | null) {
 async function refreshTokens(): Promise<string> {
   const refreshToken = tokenStorage.getRefresh();
   if (!refreshToken) throw new Error("no refresh token");
-  const res = await fetch(`${baseURL}/api/auth/refresh`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/auth/refresh`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refreshToken }),

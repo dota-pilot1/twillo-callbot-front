@@ -20,6 +20,8 @@ import { toast, toastError } from "@/shared/lib/toast";
 import { Switch } from "@/shared/ui/Switch";
 import { MenuFormDialog } from "./MenuFormDialog";
 
+const EMPTY_MENUS: MenuRecord[] = [];
+
 function buildTree(flat: MenuRecord[]): MenuItem[] {
   const map = new Map<number, MenuItem>();
   flat.forEach((m) => map.set(m.id, { ...m, children: [] }));
@@ -365,7 +367,7 @@ export function MenuTreeTab() {
   const [localFlat, setLocalFlat] = useState<MenuRecord[] | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
 
-  const { data: serverMenus = [], isLoading } = useQuery<MenuRecord[]>({
+  const { data: serverMenus = EMPTY_MENUS, isLoading } = useQuery<MenuRecord[]>({
     queryKey: ["menus"],
     queryFn: menuApi.getAll,
   });
