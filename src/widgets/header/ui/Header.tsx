@@ -1,10 +1,10 @@
 "use client";
 
 import type { MouseEvent } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Building2,
   BookOpenCheck,
   CalendarCheck,
   ClipboardList,
@@ -13,8 +13,8 @@ import {
   LogIn,
   LogOut,
   Mail,
-  MapPinned,
   Menu,
+  MessagesSquare,
   Radio,
   Stethoscope,
   Settings,
@@ -29,6 +29,7 @@ import { LanguageSelect } from "@/shared/ui/LanguageSelect";
 import { ThemeSwitcher } from "@/shared/ui/theme/ThemeSwitcher";
 import { cn } from "@/shared/lib/utils";
 import { useIsTauri } from "@/shared/tauri/useIsTauri";
+import { useAppUpdate } from "@/shared/tauri/useAppUpdate";
 import { clinicProfile } from "@/shared/config/clinic";
 import { ApiEnvironmentToggle } from "@/shared/ui/ApiEnvironmentToggle";
 import { WindowControls } from "./WindowControls";
@@ -42,18 +43,16 @@ type SidebarItem = {
 
 const navItems: SidebarItem[] = [
   { href: "/softphone", label: "소프트폰", icon: Headset },
+  { href: "/consultation-management", label: "상담 관리", icon: Radio },
   { href: "/appointments", label: "예약", icon: CalendarCheck },
-  { href: "/customers", label: "고객", icon: UsersRound },
-  { href: "/consultation-management", label: "상담", icon: Radio },
+  { href: "/users", label: "회원", icon: UsersRound },
+  { href: "/consultation-chat", label: "채팅 상담", icon: MessagesSquare },
   { href: "/messages", label: "발송", icon: Mail },
-  { href: "/clinic-settings", label: "병원", icon: Building2 },
-  { href: "/location", label: "약도", icon: MapPinned },
   { href: "/dashboard", label: "운영", icon: LayoutDashboard, exact: true },
 ];
 
 const adminItems: SidebarItem[] = [
   { href: "/faqs", label: "FAQ", icon: BookOpenCheck },
-  { href: "/users", label: "직원", icon: UserCircle },
   { href: "/roles", label: "권한", icon: ClipboardList },
   { href: "/menu-management", label: "메뉴", icon: Settings },
 ];
@@ -203,6 +202,12 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const isTauri = useIsTauri();
+  const appUpdate = useAppUpdate();
+  const { checkOnceOnStartup } = appUpdate;
+
+  useEffect(() => {
+    if (isTauri) checkOnceOnStartup();
+  }, [isTauri, checkOnceOnStartup]);
 
   if (status !== "authenticated") {
     if (isTauri) {
@@ -250,6 +255,7 @@ export function Header() {
         </nav>
 
         <div className="flex flex-col items-center gap-1.5 border-t border-border py-2">
+          <SidebarUpdateBadge appUpdate={appUpdate} />
           <Link
             href="/profile"
             aria-label="내 프로필"
@@ -310,6 +316,55 @@ export function Header() {
   );
 }
 
+function SidebarUpdateBadge({ appUpdate }: { appUpdate: ReturnType<typeof useAppUpdate> }) {
+  const { state, busy } = appUpdate;
+  const canInstall = state.status === "available" || state.status === "downloading";
+
+  const label =
+    state.status === "checking"
+      ? "확인 중"
+      : state.status === "downloading"
+        ? `${state.progress}%`
+        : state.status === "available"
+          ? "업데이트"
+          : state.status === "error"
+            ? "재시도"
+            : "최신";
+
+  const title =
+    state.status === "available"
+      ? `새 버전 v${state.availableVersion} 설치`
+      : state.status === "error"
+        ? state.message || "업데이트 확인 실패"
+        : state.currentVersion
+          ? `현재 v${state.currentVersion}`
+          : "업데이트 확인";
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <button
+        type="button"
+        title={title}
+        disabled={busy}
+        onClick={() => (canInstall ? void appUpdate.installUpdate() : void appUpdate.checkForUpdate())}
+        className={cn(
+          "grid h-5 w-[56px] place-items-center rounded-md border text-[9px] font-black leading-none transition-colors",
+          state.status === "available"
+            ? "border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-300"
+            : "border-border bg-background text-muted-foreground hover:bg-accent"
+        )}
+      >
+        {label}
+      </button>
+      {state.currentVersion && (
+        <span className="text-[9px] font-semibold tabular-nums text-muted-foreground/70 select-none">
+          v{state.currentVersion}
+        </span>
+      )}
+    </div>
+  );
+}
+
 function getPageTitle(pathname: string) {
   if (pathname.startsWith("/appointments")) return "예약 관리";
   if (pathname.startsWith("/customers")) return "고객 관리";
@@ -320,10 +375,11 @@ function getPageTitle(pathname: string) {
   if (pathname.startsWith("/location")) return "약도";
   if (pathname.startsWith("/softphone")) return "소프트폰";
   if (pathname.startsWith("/consultation-management")) return "상담 관리";
+  if (pathname.startsWith("/consultation-chat")) return "채팅 상담";
   if (pathname.startsWith("/faqs")) return "FAQ 관리";
   if (pathname.startsWith("/consultation")) return "전화 걸기";
   if (pathname.startsWith("/dashboard")) return "운영 대시보드";
-  if (pathname.startsWith("/users")) return "직원 관리";
+  if (pathname.startsWith("/users")) return "회원 관리";
   if (pathname.startsWith("/roles")) return "역할 관리";
   if (pathname.startsWith("/permissions")) return "권한 관리";
   if (pathname.startsWith("/menu-management")) return "메뉴 관리";

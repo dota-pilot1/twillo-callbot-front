@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { BotMessageSquare, CalendarCheck, MapPinned, Sparkles } from "lucide-react";
+import { BotMessageSquare, CalendarCheck, MapPinned, MessageCircleMore, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useIsTauri } from "@/shared/tauri/useIsTauri";
 import { cn } from "@/shared/lib/utils";
 
 const actions = [
   { href: "/booking", label: "예약", icon: CalendarCheck, primary: true },
-  { href: "/chatbot", label: "상담", icon: BotMessageSquare },
   { href: "/location", label: "길찾기", icon: MapPinned },
   { href: "/services", label: "시술", icon: Sparkles },
+  { href: "/chatbot", label: "챗봇", icon: BotMessageSquare },
+  { href: "/consultation-chat", label: "상담", icon: MessageCircleMore },
 ];
 
 export function PublicActionNav() {
@@ -21,7 +22,7 @@ export function PublicActionNav() {
 
   return (
     <>
-      <aside className="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 md:block">
+      <aside className="fixed right-6 top-24 z-40 hidden md:block">
         <nav className="flex flex-col gap-3">
           {actions.map((action) => (
             <ActionLink
@@ -34,7 +35,7 @@ export function PublicActionNav() {
         </nav>
       </aside>
 
-      <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-4 overflow-hidden rounded-md border border-border bg-background/94 shadow-xl shadow-stone-950/15 backdrop-blur-xl md:hidden">
+      <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 overflow-hidden rounded-md border border-border bg-background/94 shadow-xl shadow-stone-950/15 backdrop-blur-xl md:hidden">
         {actions.map((action) => (
           <ActionLink
             key={action.href ?? action.label}
@@ -66,7 +67,7 @@ function ActionLink({
     active
       ? "border-stone-950 bg-stone-950 text-white"
       : variant === "rail"
-        ? "border-white/50 bg-white/85 text-stone-700 hover:border-stone-300 hover:text-stone-950"
+        ? "border-stone-300 bg-stone-100/95 text-stone-700 shadow-stone-950/15 hover:border-stone-400 hover:bg-white hover:text-stone-950"
         : "text-stone-600 hover:bg-stone-100 hover:text-stone-950"
   );
 

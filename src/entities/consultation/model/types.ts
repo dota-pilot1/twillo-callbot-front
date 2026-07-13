@@ -1,5 +1,6 @@
 export type ConsultationAgentStatus =
   | "OFFLINE"
+  | "ONLINE"
   | "AVAILABLE"
   | "RINGING"
   | "IN_CALL"
@@ -33,4 +34,29 @@ export type UpdateConsultationAgentStatusRequest = {
   phoneNumber?: string | null;
   callSid?: string | null;
   message?: string | null;
+};
+
+export type ConsultationCallLogResponse = {
+  id: number;
+  direction: ConsultationCallDirection | null;
+  phoneNumber: string | null;
+  result: string;
+  startedAt: string | null;
+  endedAt: string | null;
+  durationSeconds: number;
+};
+
+export type ConsultationAgentCallsResponse = {
+  agentId: number;
+  agentName: string | null;
+  extension: string;
+  status: ConsultationAgentStatus;
+  statusLabel: string;
+  message: string | null;
+  totalCallsToday: number;
+  connectedCallsToday: number;
+  missedCallsToday: number;
+  talkTimeSecondsToday: number;
+  avgTalkTimeSecondsToday: number;
+  calls: ConsultationCallLogResponse[];
 };

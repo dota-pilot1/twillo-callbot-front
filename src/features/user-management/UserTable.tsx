@@ -16,6 +16,14 @@ import { isAxiosError } from "@/shared/api/axios";
 
 const PAGE_SIZE = 10;
 
+const STAFF_ROLES = new Set(["ROLE_ADMIN", "ROLE_MANAGER"]);
+type RoleFilter = "all" | "staff" | "customer";
+const FILTERS: { key: RoleFilter; label: string }[] = [
+  { key: "all", label: "전체" },
+  { key: "staff", label: "직원" },
+  { key: "customer", label: "고객" },
+];
+
 export function UserTableWithGuard() {
   return <UserTable />;
 }
@@ -23,6 +31,7 @@ export function UserTableWithGuard() {
 export function UserTable() {
   const router = useRouter();
   const [page, setPage] = useState(0);
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [editingUser, setEditingUser] = useState<UserListItem | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<UserListItem | null>(null);
@@ -78,9 +87,34 @@ export function UserTable() {
 
   const totalPages = Math.max(1, data.totalPages);
 
+  const visible = data.content.filter((u) =>
+    roleFilter === "all"
+      ? true
+      : roleFilter === "staff"
+        ? STAFF_ROLES.has(u.role.code)
+        : !STAFF_ROLES.has(u.role.code),
+  );
+
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-3">
+        <div className="inline-flex rounded-md border border-border p-0.5">
+          {FILTERS.map((f) => (
+            <button
+              key={f.key}
+              type="button"
+              onClick={() => setRoleFilter(f.key)}
+              className={
+                "rounded px-3 py-1 text-sm font-medium transition-colors " +
+                (roleFilter === f.key
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground")
+              }
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
         <button
           onClick={() => setCreateOpen(true)}
           className="rounded-md bg-primary text-primary-foreground px-3 py-1.5 text-sm font-medium hover:opacity-90 transition-opacity"
@@ -103,14 +137,14 @@ export function UserTable() {
             </tr>
           </thead>
           <tbody>
-            {data.content.length === 0 ? (
+            {visible.length === 0 ? (
               <tr>
                 <td colSpan={7} className="py-8 text-center text-muted-foreground">
-                  유저가 없습니다.
+                  {roleFilter === "all" ? "유저가 없습니다." : "해당 구분의 유저가 없습니다."}
                 </td>
               </tr>
             ) : (
-              data.content.map((u) => (
+              visible.map((u) => (
                 <tr key={u.id} className="border-t border-border hover:bg-muted/30">
                   <Td>{u.id}</Td>
                   <Td className="font-medium">{u.username}</Td>
@@ -152,7 +186,10 @@ export function UserTable() {
 
       <div className="flex items-center justify-between">
         <span className="text-xs text-muted-foreground">
-          총 {data.totalElements}명 · {page + 1} / {totalPages} 페이지
+          {roleFilter === "all"
+            ? `총 ${data.totalElements}명`
+            : `${visible.length}명 표시 · 전체 ${data.totalElements}명`}{" "}
+          · {page + 1} / {totalPages} 페이지
         </span>
         <div className="flex gap-1">
           <PageButton disabled={page === 0} onClick={() => setPage((p) => Math.max(0, p - 1))}>

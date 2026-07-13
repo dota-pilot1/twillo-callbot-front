@@ -1,13 +1,14 @@
 export type ApiEnvironment = "local" | "production";
 
-const STORAGE_KEY = "twilio.apiEnvironment";
+const BUILD_MODE = process.env.NODE_ENV === "production" ? "release" : "development";
+const STORAGE_KEY = `twilio.apiEnvironment.${BUILD_MODE}`;
 const LOCAL_URL = "http://localhost:4101";
 const PRODUCTION_URL =
   process.env.NEXT_PUBLIC_PRODUCTION_API_URL ??
   "https://twillo-callbot-22483063703.asia-northeast3.run.app";
 
 function defaultEnvironment(): ApiEnvironment {
-  return process.env.NEXT_PUBLIC_API_URL?.includes("localhost") ? "local" : "production";
+  return process.env.NODE_ENV === "production" ? "production" : "local";
 }
 
 export function getApiEnvironment(): ApiEnvironment {

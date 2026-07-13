@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { CircleAlert, CircleCheck, Download, Loader2, RefreshCw } from "lucide-react";
 import { RequireAuth } from "@/widgets/guards/RequireAuth";
 import { useAuth } from "@/entities/user/model/authStore";
+import { useIsTauri } from "@/shared/tauri/useIsTauri";
+import { useAppUpdate } from "@/shared/tauri/useAppUpdate";
 
 export default function ProfilePage() {
   return (
@@ -16,6 +19,7 @@ type Tab = "info" | "memo" | "bookmarks";
 
 function ProfileContent() {
   const { user } = useAuth();
+  const isTauri = useIsTauri();
   const [tab, setTab] = useState<Tab>("info");
 
   if (!user) return null;
@@ -70,6 +74,8 @@ function ProfileContent() {
                   </div>
                 )}
               </Section>
+
+              {isTauri && <AppUpdateSection />}
             </div>
           )}
 
@@ -120,6 +126,83 @@ function ProfileContent() {
 
       </div>
     </main>
+  );
+}
+
+function AppUpdateSection() {
+  const appUpdate = useAppUpdate();
+  const { state, busy, hasUpdate } = appUpdate;
+
+  return (
+    <Section title="앱 업데이트">
+      <div className="flex flex-col gap-3 p-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex min-w-0 flex-col">
+            <span className="text-sm font-semibold">데스크톱 앱 버전</span>
+            <span className="text-xs text-muted-foreground tabular-nums">
+              현재 버전 {state.currentVersion ? `v${state.currentVersion}` : "-"}
+            </span>
+          </div>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void appUpdate.checkForUpdate()}
+            className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-border bg-background px-3 text-xs font-semibold hover:bg-accent disabled:opacity-50"
+          >
+            {state.status === "checking" ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3.5 w-3.5" />
+            )}
+            {state.status === "checking" ? "확인 중" : "업데이트 확인"}
+          </button>
+        </div>
+
+        {state.status === "uptodate" && (
+          <div className="flex items-center gap-1.5 text-xs text-emerald-600">
+            <CircleCheck className="h-3.5 w-3.5" />
+            최신 버전을 사용 중입니다.
+          </div>
+        )}
+
+        {state.status === "error" && (
+          <div className="flex items-center gap-1.5 text-xs text-red-600">
+            <CircleAlert className="h-3.5 w-3.5" />
+            {state.message || "업데이트를 확인하지 못했습니다."}
+          </div>
+        )}
+
+        {hasUpdate && (
+          <div className="flex flex-col gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm font-semibold">새 버전 v{state.availableVersion}</span>
+              <span className="text-[11px] text-muted-foreground">설치 후 앱이 재시작됩니다.</span>
+            </div>
+            {state.notes && (
+              <p className="whitespace-pre-line text-xs text-muted-foreground">{state.notes}</p>
+            )}
+            {state.status === "downloading" && (
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-background">
+                <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${state.progress}%` }} />
+              </div>
+            )}
+            <button
+              type="button"
+              disabled={busy && state.status !== "downloading"}
+              onClick={() => void appUpdate.installUpdate()}
+              className="inline-flex h-8 w-fit items-center gap-1.5 rounded-md bg-emerald-600 px-3 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+            >
+              {state.status === "downloading" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Download className="h-3.5 w-3.5" />
+              )}
+              {state.status === "downloading" ? `다운로드 ${state.progress}%` : "지금 업데이트"}
+            </button>
+          </div>
+        )}
+      </div>
+    </Section>
   );
 }
 

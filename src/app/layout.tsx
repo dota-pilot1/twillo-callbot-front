@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { QueryProvider } from "./QueryProvider";
 import { AuthInitializer } from "./AuthInitializer";
+import { PresenceConnector } from "./PresenceConnector";
 import { AppChrome } from "@/widgets/header";
 import { ThemeInitializer } from "@/shared/ui/theme/ThemeInitializer";
 import { I18nProvider } from "@/shared/i18n/I18nProvider";
@@ -54,6 +55,7 @@ export default function RootLayout({
         <I18nProvider>
           <QueryProvider>
             <AuthInitializer>
+              <PresenceConnector />
               <AppChrome>{children}</AppChrome>
               <PublicActionNav />
             </AuthInitializer>
